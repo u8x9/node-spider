@@ -11,3 +11,9 @@
 ```bash
 npm install cheerio
 ```
+
+## 下载图片
+
+```bash
+npm install download
+```
