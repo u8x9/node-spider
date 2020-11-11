@@ -19,10 +19,11 @@ let totalPage = 1; // 总页数
 
 
 async function getData(driver) {
+    // while, try 配合解决 StaleElementReferenceError: stale element reference: element is not attached to the page document
+    console.log(`---- 正在获取第 ${currentPage} 页的数据，总共 ${totalPage} 页 -----`)
     while (true) {
-        let flag = true;
+        let isOK = true;
         try {
-            console.log(`---- 正在获取第 ${currentPage} 页的数据，总共 ${totalPage} 页 -----`)
             // 结果
             let items = await driver.findElements(By.css('.item_con_list .con_list_item'));
             let list = [];
@@ -54,10 +55,11 @@ async function getData(driver) {
             }
         } catch (e) {
             if (e) {
-                flag = false;
+                isOK = false;
+                //console.log('发生错误，重试……', e.message)
             }
         } finally {
-            if (flag) {
+            if (isOK) {
                 break;
             }
         }
