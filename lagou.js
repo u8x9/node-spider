@@ -19,34 +19,47 @@ let totalPage = 1; // 总页数
 
 
 async function getData(driver) {
-    console.log(`---- 正在获取第 ${currentPage} 页的数据，总共 ${totalPage} 页 -----`)
-    // 结果
-    let items = await driver.findElements(By.css('.item_con_list .con_list_item'));
-    let list = [];
-    for (let i = 0; i < items.length; i++) {
-        let item = items[i];
-        let jobTitle = await item.findElement(By.css('.p_top h3')).getText();
-        let jobLink = await item.findElement(By.css('.p_top a.position_link')).getAttribute('href');
-        let loc = await item.findElement(By.css('.p_top span.add em')).getText();
-        let pubtime = await item.findElement(By.css('.p_top span.format-time')).getText();
-        let company = await item.findElement(By.css('.company > .company_name > a'))
-        let companyName = await company.getText();
-        let companyLink = await company.getAttribute('href');
+    while (true) {
+        let flag = true;
+        try {
+            console.log(`---- 正在获取第 ${currentPage} 页的数据，总共 ${totalPage} 页 -----`)
+            // 结果
+            let items = await driver.findElements(By.css('.item_con_list .con_list_item'));
+            let list = [];
+            for (let i = 0; i < items.length; i++) {
+                let item = items[i];
+                let jobTitle = await item.findElement(By.css('.p_top h3')).getText();
+                let jobLink = await item.findElement(By.css('.p_top a.position_link')).getAttribute('href');
+                let loc = await item.findElement(By.css('.p_top span.add em')).getText();
+                let pubtime = await item.findElement(By.css('.p_top span.format-time')).getText();
+                let company = await item.findElement(By.css('.company > .company_name > a'))
+                let companyName = await company.getText();
+                let companyLink = await company.getAttribute('href');
 
-        list.push({
-            job: jobTitle,
-            jobLink: jobLink,
-            loc: loc,
-            pubtime: pubtime,
-            companyName: companyName,
-            companyLink: companyLink,
-        });
-    }
-    console.log(list.length);
-    currentPage++;
-    if (currentPage <= totalPage) {
-        // 点击下一页
-        await driver.findElement(By.css('.pager_next')).click();
-        getData(driver);
+                list.push({
+                    job: jobTitle,
+                    jobLink: jobLink,
+                    loc: loc,
+                    pubtime: pubtime,
+                    companyName: companyName,
+                    companyLink: companyLink,
+                });
+            }
+            console.log(list.length);
+            currentPage++;
+            if (currentPage <= totalPage) {
+                // 点击下一页
+                await driver.findElement(By.css('.pager_next')).click();
+                getData(driver);
+            }
+        } catch (e) {
+            if (e) {
+                flag = false;
+            }
+        } finally {
+            if (flag) {
+                break;
+            }
+        }
     }
 }
